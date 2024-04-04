@@ -1,19 +1,24 @@
 let para =
-  "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Et mollitia accusamus amet veniam? Tenetur autem voluptatibus vitae nostrum exercitationem quae eaque itaque odio aliquid veritatis, labore vel, obcaecati unde at dolore cupiditate aliquam, ea sapiente ad inventore veniam eveniet voluptas minus? Laudantium enim, consequuntur tenetur atque laborum unde possimus commodi incidunt fugiat voluptatibus, quam aliquid nulla quae nihil inventore architecto adipisci repellat vero consequatur tempora perferendis explicabo! Et nisi architecto omnis reiciendis eum explicabo qui consequuntur suscipit adipisci error, id totam in ut, dolorum delectus.";
+  "JavaScript, the dynamic wizard of web development, serves as the transformative force behind the digital landscape. It's the enchanting storyteller that brings static web pages to life, infusing them with interactivity, responsiveness, and charm. Much like a skilled magician, JavaScript wields its spellbinding syntax to orchestrate the seamless interaction between HTML and CSS, creating captivating user experiences. From form validation to dynamic content updates, JavaScript empowers developers to craft immersive web applications that engage and delight users. Its versatility knows no bounds, allowing it to adapt to various tasks and scenarios effortlessly. With its ubiquity across browsers and platforms, JavaScript has become the lingua franca of the web, bridging the gap between technology and creativity. Like a master illusionist, it dazzles users with its ability to animate, manipulate the DOM, and create stunning visual effects, turning mundane websites into captivating digital experiences. In the ever-evolving landscape of web development, JavaScript remains a cornerstone, continuously enchanting developers and users alike with its boundless potential and endless possibilities."
 let list = para.split();
-let typingSpace = document.querySelector("#typingSpace").firstElementChild;
+let typingSpace = document.querySelector("#typingSpace")
+let typingContent = typingSpace.firstElementChild;
 let result = document.querySelector("#result");
 let body = document.querySelector("body");
-let count = 0;
-let words = 0;
+let timeLeft = document.querySelector("#time");
+let speed = result.firstElementChild;
+let accuracy = document.getElementById("aquracy");
+let tryAgainBtn = document.querySelector('button');
 
 function displayList() {
   for (let i = 0; i < list[0].length; i++) {
-    typingSpace.innerHTML += `<span id='span'>${list[0].charAt(i)}<span>`;
+    typingContent.innerHTML += `<span id='span'>${list[0].charAt(i)}<span>`;
   }
 }
 displayList();
 
+let count = 0;
+let words = 1;
 let i = 0;
 let interval;
 let totelKeyPressed = 0;
@@ -21,30 +26,33 @@ let correct = 0;
 let token = 0;
 
 body.addEventListener("keydown", (e) => {
-  if(i != 0){
-  if (e.key == "Backspace") {
+  if (e.key == "Backspace" && i != 0) {
     if (token < 2) {
       i--;
-      typingSpace.children.item(i).removeAttribute("class", "wrong");
+      typingContent.children.item(i).removeAttribute("class", "wrong");
     } else {
-      typingSpace.children.item(i).removeAttribute("class", "wrong");
+      typingContent.children.item(i).removeAttribute("class", "wrong");
     }
     token--;
   }
-}
 });
+
 body.addEventListener("keypress", fun);
 
 function fun(e) {
+  e.preventDefault();
   if (i === 0) interval = setInterval(timer, 100);
   if (e.key == list[0].charAt(i)) {
-    typingSpace.children.item(i).setAttribute("class", "correct");
+    typingContent.children.item(i).setAttribute("class", "correct");
     if (list[0].charAt(i) === " ") words++;
+    if(words % 9 === 0){
+        typingSpace.scrollTo({top: 5*words, behavior: 'smooth'})
+    }
     i++;
     correct++;
     token = 0;
   } else {
-    typingSpace.children.item(i).setAttribute("class", "wrong");
+    typingContent.children.item(i).setAttribute("class", "wrong");
     if (token < 2) {
       i++;
       token++;
@@ -55,38 +63,34 @@ function fun(e) {
 
 function timer() {
   count++;
-  result.firstElementChild.innerText = `WPM : ${Math.floor((words*60)/(count/10))}`;
-  document.getElementById("aquracy").innerText = `ACCURACY : ${Math.floor((correct / totelKeyPressed) * 100)}%`;
+  speed.innerText = `WPM : ${Math.floor(((Math.floor(correct/5))*60)/(count/10))}`;
+  accuracy.innerText = `ACCURACY : ${Math.floor((correct / totelKeyPressed) * 100)}%`;
   document.querySelector("#time").style.width = `${count/6}%`;
 
   if (count === 600) {
-    document.querySelector("#time").style.width = `0%`;
     clearInterval(interval);
-    result.firstElementChild.innerText = `WPM : ${Math.floor(words)}`;
-  
-      document.getElementById("aquracy").innerText = `ACCURACY : ${Math.floor((correct / totelKeyPressed) * 100)}%`;
-    
+    timeLeft.style.width = `0%`;
+    speed.innerText = `WPM : ${Math.floor(correct/5)}`;
+    accuracy.innerText = `ACCURACY : ${Math.floor((correct / totelKeyPressed) * 100)}%`;
     body.removeEventListener("keypress", fun);
-    (i = 0), (count = 0), (words = 0), (wrongWords = 0), (correct = 0);
-    displayList();
-
-    typingSpace.parentElement.style.display = "none";
+    typingSpace.style.display = "none";
   }
 }
 
-document.querySelector('button').addEventListener("click", (e) => {
+tryAgainBtn.addEventListener("click", (e) => {
   if(e.pointerType === 'mouse'){
   body.addEventListener("keypress", fun);
-  typingSpace.innerHTML = null;
+  typingContent.innerHTML = null;
   displayList();
 
   clearInterval(interval);
-  result.firstElementChild.innerText = `WPM : ${0}`;
+  speed.innerText = `WPM : ${0}`;
+  accuracy.innerText = `ACCURACY : ${0}%`;
+    (i = 0), (count = 0), (words = 0), (wrongWords = 0), (correct = 0),(totelKeyPressed = 0);
 
-    document.getElementById("aquracy").innerText = `ACCURACY : ${0}%`;
-    (i = 0), (count = 0), (words = 0), (wrongWords = 0), (correct = 0);
-
-    typingSpace.parentElement.style.display = "block";
-    document.querySelector("#time").style.width = `0%`;
+    typingSpace.scrollTo({top: -1000, behavior: 'smooth'})
+    typingSpace.style.display = "block";
+    timeLeft.style.width = `0%`;
   }
 });
+
