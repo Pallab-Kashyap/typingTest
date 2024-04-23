@@ -46,8 +46,8 @@ function fun(e) {
   if (e.key == list[0].charAt(i)) {
     typingContent.children.item(i).setAttribute("class", "correct");
     if (list[0].charAt(i) === " ") words++;
-    if(words % 13 === 0){
-        typingSpace.scrollTo({top: 8*words, behavior: 'smooth'})
+    if(words % 11 === 0){
+        typingSpace.scrollTo({top: 6.2*words, behavior: 'smooth'})
     }
     i++;
     correct++;
